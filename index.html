@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Responsywna aplikacja do nauki pytań na patent sternika motorowodnego."
+    />
+    <title>Sternik Motorowodny | Trener pytań</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="hero" aria-labelledby="app-title">
+        <div>
+          <p class="eyebrow">Trener egzaminacyjny</p>
+          <h1 id="app-title">Sternik motorowodny</h1>
+          <p class="hero-copy">
+            Losowe pytania z pełnej bazy, odpowiedź od razu po kliknięciu i szybkie powtórki tego,
+            co wymaga dopracowania.
+          </p>
+        </div>
+
+        <div class="hero-card" aria-label="Podsumowanie bazy pytań">
+          <span class="hero-card__number" id="total-questions">286</span>
+          <span class="hero-card__label">pytań w bazie</span>
+        </div>
+      </section>
+
+      <section class="dashboard" aria-label="Statystyki nauki">
+        <article class="stat-card">
+          <span class="stat-card__label">Dzisiaj</span>
+          <strong id="answered-count">0</strong>
+          <span>odpowiedzi</span>
+        </article>
+        <article class="stat-card">
+          <span class="stat-card__label">Skuteczność</span>
+          <strong id="accuracy">0%</strong>
+          <span>poprawnych</span>
+        </article>
+        <article class="stat-card">
+          <span class="stat-card__label">Seria</span>
+          <strong id="streak">0</strong>
+          <span>z rzędu</span>
+        </article>
+        <article class="stat-card">
+          <span class="stat-card__label">Przerobione</span>
+          <strong id="seen-count">0</strong>
+          <span>unikalnych</span>
+        </article>
+      </section>
+
+      <section class="quiz-card" aria-live="polite">
+        <div class="quiz-card__top">
+          <div>
+            <p class="question-counter" id="question-counter">Pytanie</p>
+            <h2 id="question-text">Ładowanie pytania...</h2>
+          </div>
+          <span class="mode-pill" id="mode-pill">Losowo</span>
+        </div>
+
+        <div class="visual-note hidden" id="visual-note">
+          To pytanie w PDF opiera się o grafikę. Ekstraktor tekstu nie przeniósł rysunku, więc
+          widzisz warianty zastępcze A-D.
+        </div>
+
+        <div class="answers-grid" id="answers" role="list"></div>
+
+        <div class="feedback hidden" id="feedback"></div>
+
+        <div class="controls">
+          <button class="button button--secondary" id="skip-button" type="button">
+            Pomiń
+          </button>
+          <button class="button button--ghost" id="mistakes-button" type="button">
+            Powtórz błędy
+          </button>
+          <button class="button button--primary" id="next-button" type="button" disabled>
+            Następne pytanie
+          </button>
+        </div>
+      </section>
+
+      <section class="progress-panel" aria-label="Postęp nauki">
+        <div>
+          <h2>Postęp w bazie</h2>
+          <p id="progress-copy">Zacznij odpowiadać, a zobaczysz ile pytań już dotknąłeś.</p>
+        </div>
+        <div class="progress-bar" aria-hidden="true">
+          <span id="progress-bar"></span>
+        </div>
+        <button class="text-button" id="reset-button" type="button">Wyczyść statystyki</button>
+      </section>
+    </main>
+  </body>
+</html>
