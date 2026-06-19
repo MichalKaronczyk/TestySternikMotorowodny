@@ -395,7 +395,7 @@ h1 {
   }
 
   .controls {
-    grid-template-columns: auto auto 1fr;
+    grid-template-columns: auto auto auto 1fr;
   }
 
   .button--primary {

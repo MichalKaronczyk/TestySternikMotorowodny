@@ -14,6 +14,7 @@ const elements = {
   answers: document.querySelector("#answers"),
   feedback: document.querySelector("#feedback"),
   skipButton: document.querySelector("#skip-button"),
+  unseenButton: document.querySelector("#unseen-button"),
   mistakesButton: document.querySelector("#mistakes-button"),
   nextButton: document.querySelector("#next-button"),
   resetButton: document.querySelector("#reset-button"),
@@ -25,9 +26,10 @@ const state = {
   questions: [],
   deck: [],
   mistakesDeck: [],
+  unseenDeck: [],
   current: null,
   answeredCurrent: false,
-  mistakesMode: false,
+  mode: "random",
   progress: {
     answered: 0,
     correct: 0,
@@ -71,6 +73,7 @@ function saveProgress() {
 function hydrateStats() {
   const { answered, correct, streak, seenIds } = state.progress;
   const accuracy = answered === 0 ? 0 : Math.round((correct / answered) * 100);
+  const unseenCount = getUnseenQuestions().length;
   const seenPercent =
     state.questions.length === 0 ? 0 : Math.round((seenIds.length / state.questions.length) * 100);
 
@@ -85,6 +88,7 @@ function hydrateStats() {
       ? "Zacznij odpowiadać, a zobaczysz ile pytań już dotknąłeś."
       : `Masz za sobą ${seenIds.length} z ${state.questions.length} pytań (${seenPercent}%).`;
   elements.mistakesButton.disabled = state.progress.mistakeIds.length === 0;
+  elements.unseenButton.disabled = unseenCount === 0;
 }
 
 function getAnswerText(question, answerId) {
@@ -96,8 +100,29 @@ function rebuildMistakesDeck() {
   state.mistakesDeck = shuffle(state.questions.filter((question) => mistakeIds.has(question.id)));
 }
 
+function getUnseenQuestions() {
+  const seenIds = new Set(state.progress.seenIds);
+  return state.questions.filter((question) => !seenIds.has(question.id));
+}
+
+function rebuildUnseenDeck() {
+  state.unseenDeck = shuffle(getUnseenQuestions());
+}
+
+function getModeLabel() {
+  if (state.mode === "mistakes") {
+    return "Powtórka błędów";
+  }
+
+  if (state.mode === "unseen") {
+    return "Nowe pytania";
+  }
+
+  return "Losowo";
+}
+
 function getNextQuestion() {
-  if (state.mistakesMode) {
+  if (state.mode === "mistakes") {
     if (state.mistakesDeck.length === 0) {
       rebuildMistakesDeck();
     }
@@ -106,7 +131,19 @@ function getNextQuestion() {
       return state.mistakesDeck.pop();
     }
 
-    state.mistakesMode = false;
+    state.mode = "random";
+  }
+
+  if (state.mode === "unseen") {
+    if (state.unseenDeck.length === 0) {
+      rebuildUnseenDeck();
+    }
+
+    if (state.unseenDeck.length > 0) {
+      return state.unseenDeck.pop();
+    }
+
+    state.mode = "random";
   }
 
   if (state.deck.length === 0) {
@@ -125,7 +162,7 @@ function renderQuestion() {
     return;
   }
 
-  elements.modePill.textContent = state.mistakesMode ? "Powtórka błędów" : "Losowo";
+  elements.modePill.textContent = getModeLabel();
   elements.questionCounter.textContent = `Pytanie ${state.current.id} z ${state.questions.length}`;
   elements.questionText.textContent = state.current.question;
   elements.visualNote.classList.toggle("hidden", !state.current.hasVisualPrompt);
@@ -214,8 +251,18 @@ function startMistakesMode() {
     return;
   }
 
-  state.mistakesMode = true;
+  state.mode = "mistakes";
   rebuildMistakesDeck();
+  renderQuestion();
+}
+
+function startUnseenMode() {
+  if (getUnseenQuestions().length === 0) {
+    return;
+  }
+
+  state.mode = "unseen";
+  rebuildUnseenDeck();
   renderQuestion();
 }
 
@@ -233,7 +280,8 @@ function resetProgress() {
     seenIds: [],
     mistakeIds: [],
   };
-  state.mistakesMode = false;
+  state.mode = "random";
+  state.unseenDeck = [];
   saveProgress();
   hydrateStats();
   renderQuestion();
@@ -262,6 +310,7 @@ async function init() {
 
 elements.nextButton.addEventListener("click", renderQuestion);
 elements.skipButton.addEventListener("click", skipQuestion);
+elements.unseenButton.addEventListener("click", startUnseenMode);
 elements.mistakesButton.addEventListener("click", startMistakesMode);
 elements.resetButton.addEventListener("click", resetProgress);
 

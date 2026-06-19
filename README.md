@@ -8,6 +8,7 @@ Statyczna aplikacja webowa do nauki pytań egzaminacyjnych na patent sternika mo
 - natychmiastowy feedback po kliknięciu odpowiedzi,
 - statystyki zapisywane lokalnie w przeglądarce,
 - tryb powtarzania błędów,
+- tryb nowych pytań, który pokazuje tylko nieprzerobione pozycje,
 - responsywny interfejs dla telefonu, tabletu i laptopa,
 - dane w pliku `data/questions.json`, bez backendu.
 
